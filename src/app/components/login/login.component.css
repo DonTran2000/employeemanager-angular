@@ -1,0 +1,28 @@
+html,
+body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f5f5f5;
+    /* Màu nền tổng thể của trang */
+}
+
+.login-container {
+    padding: 20px;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    /* Màu nền của form đăng nhập */
+    max-width: 400px;
+    width: 100%;
+}
+
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    /* Đặt chiều cao container bằng 100% chiều cao viewport */
+}
