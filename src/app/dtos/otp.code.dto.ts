@@ -5,19 +5,19 @@ import {
     IsDate
 } from 'class-validator'
 
-export class ResetPasswordDTO {
+export class OtpCodeDTO {
+    @IsPhoneNumber()
+    phone: string;
+
     @IsString()
     email: string;
 
     @IsString()
     otp: string;
 
-    @IsString()
-    newPassword: string;
-
     constructor(data: any) {
+        this.phone = data.phone;
         this.email = data.email;
         this.otp = data.otp;
-        this.newPassword = data.newPassword;
     }
 }

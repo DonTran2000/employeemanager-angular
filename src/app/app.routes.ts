@@ -11,6 +11,7 @@ import { ResetPasswordComponent } from './components/reset_password/reset.passwo
 //import { OrderAdminComponent } from './components/admin/order/order.admin.component';
 
 export const routes: Routes = [
+    // { path: '', redirectTo: '/login', pathMatch: 'full' },
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },
     { path: 'resetPassword', component: ResetPasswordComponent },

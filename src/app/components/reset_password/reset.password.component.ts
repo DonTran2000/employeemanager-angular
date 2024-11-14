@@ -7,6 +7,8 @@ import { ApiResponse } from "../../responses/api.response";
 import { EmailService } from "../../services/email.service";
 import { HttpErrorResponse } from "@angular/common/http";
 import { ToastrService } from 'ngx-toastr';
+import { EmployeeManagerService } from "../../services/employee.manager.service";
+import { OtpCodeDTO } from "../../dtos/otp.code.dto";
 
 @Component({
     selector: 'app-resetpassword',
@@ -20,38 +22,54 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class ResetPasswordComponent {
     @ViewChild('resetPassForm') resetPassForm!: NgForm;
-    phone: string = '';
-    email: string = '';
+    @ViewChild('newPasswordForm') newPasswordForm!: NgForm;
+
 
     isResetSuccessful: boolean = false;
+    otpCodeDTO: OtpCodeDTO = new OtpCodeDTO({});
+    resetPasswordDTO: ResetPasswordDTO = new ResetPasswordDTO({});
 
-    onPhoneNumberChanger() {
-        console.log(`Phone typed: ${this.phone}`);
-    }
+    isEmailSent: boolean = false;
+    confirmPassword: string = '';
+    isOtpValidated: boolean = false;
 
     constructor(
         private emailService: EmailService,
-        private router: Router,
-        private toastr: ToastrService  // Import ToastrService
+        private toastr: ToastrService,  // Import ToastrService
     ) { }
 
     resetPassWord() {
-        const resetPasswordDTO: ResetPasswordDTO = {
-            phone: this.phone,
-            email: this.email
-        };
+        debugger
+        if (!this.otpCodeDTO.email) {
+            this.toastr.error('Vui lòng nhập địa chỉ email.', 'Lỗi');
+            return;
+        }
 
-        this.emailService.sendResetPasswordEmail(resetPasswordDTO).subscribe({
+        this.emailService.sendOtp(this.otpCodeDTO).subscribe({
             next: (apiResponse: ApiResponse) => {
-                debugger;
-                this.isResetSuccessful = true; // Ẩn form và hiển thị thông báo
-                
-                // this.router.navigate(['/login']);
+                this.isEmailSent = true;
+                this.toastr.success('Mã xác nhận đã được gửi. Vui lòng kiểm tra email của bạn.', 'Thành công');
             },
             error: (error: HttpErrorResponse) => {
-                debugger;
                 this.toastr.error(error?.error?.message ?? 'Có lỗi xảy ra, vui lòng thử lại sau.', 'Lỗi');
             }
-        })
+        });
+    }
+
+    confirmResetPassword() {
+        if (this.resetPasswordDTO.newPassword !== this.confirmPassword) {
+            this.toastr.error('Mật khẩu xác nhận không khớp.', 'Lỗi');
+            return;
+        }
+
+        this.emailService.resetPassword(this.resetPasswordDTO).subscribe({
+            next: (response: ApiResponse) => {
+                this.isResetSuccessful = true;
+                this.toastr.success('Mật khẩu đã được đặt lại thành công.', 'Thành công');
+            },
+            error: (error: HttpErrorResponse) => {
+                this.toastr.error(error?.error?.message ?? 'Có lỗi xảy ra khi đặt lại mật khẩu.', 'Lỗi');
+            }
+        });
     }
 }
